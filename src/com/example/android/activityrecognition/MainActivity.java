@@ -282,7 +282,7 @@ public class MainActivity extends Activity {
         		if ((data.equalsIgnoreCase("still")) ||  (data.equalsIgnoreCase("unknow")) || (data.equalsIgnoreCase("tilting"))){
 				//Toast.makeText(mainContext, data, Toast.LENGTH_SHORT).show();
         			image_status.setImageResource(R.drawable.stop);
-        		} else if (data.equalsIgnoreCase("on foot")){
+        		} else if (data.equalsIgnoreCase("on_foot")){
         			image_status.setImageResource(R.drawable.foot);
         		} else {
         			image_status.setImageResource(R.drawable.road);
