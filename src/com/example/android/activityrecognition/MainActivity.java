@@ -33,13 +33,16 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ArrayAdapter;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.Toast;
 
 import com.example.android.activityrecognition.ActivityUtils.REQUEST_TYPE;
 
 import java.io.IOException;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Sample application that demonstrates the use of
@@ -51,6 +54,8 @@ import java.util.List;
  * so that detection can continue even if the Activity is not visible.
  */
 public class MainActivity extends Activity {
+	
+	public static MainActivity mainContext = null;
 
     private static final int MAX_LOG_SIZE = 5000;
 
@@ -59,6 +64,8 @@ public class MainActivity extends Activity {
 
     // Store the current request type (ADD or REMOVE)
     private REQUEST_TYPE mRequestType;
+
+    private ImageView image_status = null;
 
     /*
      *  Intent filter for incoming broadcasts from the
@@ -86,6 +93,8 @@ public class MainActivity extends Activity {
         // Set the main layout
         setContentView(R.layout.activity_main);
 
+        image_status = (ImageView) findViewById(R.id.status_image);
+
         // Set the broadcast receiver intent filer
         mBroadcastManager = LocalBroadcastManager.getInstance(this);
 
@@ -99,6 +108,11 @@ public class MainActivity extends Activity {
 
         // Create a new LogFile object
         mLogFile = LogFile.getInstance(this);
+        
+        LocalBroadcastManager bManager = LocalBroadcastManager.getInstance(this);
+        IntentFilter intentFilter = new IntentFilter();
+        intentFilter.addAction(RECEIVE_JSON);
+        bManager.registerReceiver(bReceiver, intentFilter);
 
     }
 
@@ -247,4 +261,35 @@ public class MainActivity extends Activity {
          */
         mDetectionRequester.getRequestPendingIntent().cancel();
     }
+
+   
+    
+    
+    
+    
+    public static final String RECEIVE_JSON = "scooby doo, where are you";
+    BroadcastReceiver bReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+
+            /*
+             * When an Intent is received from the update listener IntentService, update
+             * the displayed log.
+             */
+            //updateActivityHistory();
+        	if(intent.getAction().equals(RECEIVE_JSON)) {
+        		String data = intent.getExtras().getString("json");
+        		if ((data.equalsIgnoreCase("still")) ||  (data.equalsIgnoreCase("unknow")) || (data.equalsIgnoreCase("tilting"))){
+				//Toast.makeText(mainContext, data, Toast.LENGTH_SHORT).show();
+        			image_status.setImageResource(R.drawable.stop);
+        		} else if (data.equalsIgnoreCase("on foot")){
+        			image_status.setImageResource(R.drawable.foot);
+        		} else {
+        			image_status.setImageResource(R.drawable.road);
+        		}
+        	}
+        	
+        	
+        }
+    };
 }

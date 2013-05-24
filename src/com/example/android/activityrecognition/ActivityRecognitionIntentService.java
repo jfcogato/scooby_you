@@ -20,6 +20,7 @@ import com.google.android.gms.location.ActivityRecognitionResult;
 import com.google.android.gms.location.DetectedActivity;
 
 import android.app.IntentService;
+import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
@@ -28,6 +29,7 @@ import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.provider.Settings;
 import android.support.v4.app.NotificationCompat;
+import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -107,21 +109,21 @@ public class ActivityRecognitionIntentService extends IntentService {
                 editor.commit();
 
             // If the repository contains a type
-            } else if (
-                       // If the current type is "moving"
-                       !isMoving(activityType)
-
-                       &&
-
-                       // The activity has changed from the previous activity
-                       activityChanged(activityType)
-
-                       // The confidence level for the current activity is > 50%
-                       && (confidence >= 50)) {
+            //} else if (!isMoving(activityType) && activityChanged(activityType) && (confidence >= 50)) {
+            } else if (activityChanged(activityType) && (confidence >= 50)) {
 
                 		// Notify the user
         				Log.d("hello", getNameFromType(mostProbableActivity.getType()));
                 		sendNotification();
+                		
+                		String jsonString = getNameFromType(mostProbableActivity.getType());
+                		Intent RTReturn = new Intent("scooby doo, where are you");
+                		RTReturn.putExtra("json", jsonString);
+                		LocalBroadcastManager.getInstance(this).sendBroadcast(RTReturn);
+                		
+                		
+                		
+                		
             }
         }
     }
